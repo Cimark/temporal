@@ -1,0 +1,12 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = 'h-4 w-4 shrink-0' } = Astro.props;
+---
+
+<svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+  <path d="M4 6h16a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V7a1 1 0 011-1z" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M4 7l8 6 8-6" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

@@ -1,0 +1,303 @@
+---
+interface Props {
+  class?: string;
+  size?: 'md' | 'lg' | 'xl';
+  scrollDriven?: boolean;
+}
+
+const { class: className = '', size = 'md', scrollDriven = false } = Astro.props;
+---
+
+<span
+  class:list={[
+    'plant-grow',
+    size === 'lg' && 'plant-grow--lg',
+    size === 'xl' && 'plant-grow--xl',
+    scrollDriven && 'plant-grow--scroll',
+    className,
+  ]}
+  aria-hidden="true"
+>
+  <svg class="plant-grow__svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse class="plant-grow__seed" cx="24" cy="38" rx="4.5" ry="3" fill="currentColor" opacity="0.85" />
+    <path
+      class="plant-grow__stem"
+      d="M24 35V18"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+    <g class="plant-grow__branch plant-grow__branch--left">
+      <path
+        class="plant-grow__twig"
+        d="M24 24C18 24 14 20 13 15"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        class="plant-grow__bud"
+        d="M17.2 21.8c-1.6-.4-2.6.2-2.8 1.1-.2.8 1.1 1.2 2.8.9"
+        fill="currentColor"
+      />
+      <path
+        class="plant-grow__bud plant-grow__bud--tip"
+        d="M13 15c-2.4-.7-3.8.4-4 1.8-.2 1.3 1.8 1.9 4 1.5"
+        fill="currentColor"
+      />
+    </g>
+    <g class="plant-grow__branch plant-grow__branch--right">
+      <path
+        class="plant-grow__twig"
+        d="M24 20C30 20 34 16 35 11"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        class="plant-grow__bud"
+        d="M29.2 18.8c1.5-.3 2.4.3 2.6 1.1.2.8-1 1.3-2.6 1"
+        fill="currentColor"
+      />
+      <path
+        class="plant-grow__bud plant-grow__bud--tip"
+        d="M35 11c2.2-.6 3.1.5 2.9 1.9-.2 1.3-2.1 1.1-2.9-.1"
+        fill="currentColor"
+      />
+    </g>
+    <g class="plant-grow__branch plant-grow__branch--top">
+      <path
+        class="plant-grow__twig"
+        d="M24 16C24 10 22 7 20 5"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        class="plant-grow__bud"
+        d="M22.2 10.8c-.9-1.1-.4-2.1.6-2.4 1-.3 1.5.7 1 1.7"
+        fill="currentColor"
+      />
+      <path
+        class="plant-grow__bud plant-grow__bud--tip"
+        d="M20 5c-.9-1.5-.1-2.7 1.3-2.9 1.2-.2 1.5 1.1.7 2.1"
+        fill="currentColor"
+      />
+    </g>
+  </svg>
+</span>
+
+<style>
+  .plant-grow {
+    @apply inline-flex items-center justify-center text-eco-500;
+  }
+
+  .plant-grow__svg {
+    @apply h-8 w-8;
+  }
+
+  .plant-grow--lg .plant-grow__svg {
+    @apply h-16 w-16 sm:h-[4.75rem] sm:w-[4.75rem];
+  }
+
+  .plant-grow--xl .plant-grow__svg {
+    @apply h-40 w-40 sm:h-48 sm:w-48;
+  }
+
+  .plant-grow--xl .plant-grow__stem,
+  .plant-grow--xl .plant-grow__twig {
+    stroke-width: 2.5;
+  }
+
+  .plant-grow--lg .plant-grow__stem,
+  .plant-grow--lg .plant-grow__twig {
+    stroke-width: 2.25;
+  }
+
+  .plant-grow__seed {
+    transform-origin: 24px 38px;
+    animation: plant-grow-seed 4.5s ease-in-out infinite;
+  }
+
+  .plant-grow__stem {
+    transform-origin: 24px 35px;
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+    animation: plant-grow-stem 4.5s ease-in-out infinite;
+  }
+
+  .plant-grow__branch {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+
+  .plant-grow__branch--left {
+    transform-origin: 24px 24px;
+    animation: plant-grow-branch 4.5s ease-out infinite;
+    animation-delay: 0s;
+  }
+
+  .plant-grow__branch--right {
+    transform-origin: 24px 20px;
+    animation: plant-grow-branch 4.5s ease-out infinite;
+    animation-delay: 0.15s;
+  }
+
+  .plant-grow__branch--top {
+    transform-origin: 24px 16px;
+    animation: plant-grow-branch 4.5s ease-out infinite;
+    animation-delay: 0.3s;
+  }
+
+  .plant-grow__bud {
+    opacity: 0.92;
+    transform-origin: center;
+    transform: scale(0.6);
+    animation: plant-grow-bud 4.5s ease-out infinite;
+  }
+
+  .plant-grow__branch--left .plant-grow__bud {
+    animation-delay: 0.08s;
+  }
+
+  .plant-grow__branch--right .plant-grow__bud {
+    animation-delay: 0.23s;
+  }
+
+  .plant-grow__branch--top .plant-grow__bud {
+    animation-delay: 0.38s;
+  }
+
+  .plant-grow__bud--tip {
+    opacity: 1;
+    transform: scale(0.75);
+    animation-delay: inherit;
+  }
+
+  .plant-grow__branch--left .plant-grow__bud--tip {
+    animation-delay: 0.14s;
+  }
+
+  .plant-grow__branch--right .plant-grow__bud--tip {
+    animation-delay: 0.29s;
+  }
+
+  .plant-grow__branch--top .plant-grow__bud--tip {
+    animation-delay: 0.44s;
+  }
+
+  @keyframes plant-grow-seed {
+    0%,
+    8% {
+      transform: scale(0.7);
+      opacity: 0.4;
+    }
+
+    18%,
+    100% {
+      transform: scale(1);
+      opacity: 0.9;
+    }
+  }
+
+  @keyframes plant-grow-stem {
+    0%,
+    20% {
+      stroke-dashoffset: 20;
+    }
+
+    45%,
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes plant-grow-branch {
+    0%,
+    38% {
+      opacity: 0;
+      transform: scale(0.35);
+    }
+
+    58%,
+    88% {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes plant-grow-bud {
+    0%,
+    48% {
+      opacity: 0;
+      transform: scale(0.2);
+    }
+
+    66%,
+    88% {
+      opacity: 0.95;
+      transform: scale(1);
+    }
+
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plant-grow__seed,
+    .plant-grow__stem,
+    .plant-grow__branch,
+    .plant-grow__bud {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      stroke-dashoffset: 0;
+    }
+  }
+
+  :global(.plant-grow--scroll) .plant-grow__seed,
+  :global(.plant-grow--scroll) .plant-grow__stem,
+  :global(.plant-grow--scroll) .plant-grow__branch,
+  :global(.plant-grow--scroll) .plant-grow__bud {
+    animation: none;
+  }
+
+  :global(.plant-grow--scroll) .plant-grow__seed {
+    transform: scale(calc(0.72 + var(--method-progress, 0) * 0.28));
+    opacity: calc(0.45 + var(--method-progress, 0) * 0.45);
+  }
+
+  :global(.plant-grow--scroll) .plant-grow__stem {
+    stroke-dashoffset: calc(20px * (1 - min(1, var(--method-progress, 0) * 1.15)));
+  }
+
+  :global(.plant-grow--scroll) .plant-grow__branch--left {
+    --branch-reveal: clamp(0, (var(--method-progress, 0) - 0.12) / 0.22, 1);
+    opacity: var(--branch-reveal);
+    transform: scale(calc(0.35 + var(--branch-reveal) * 0.65));
+  }
+
+  :global(.plant-grow--scroll) .plant-grow__branch--right {
+    --branch-reveal: clamp(0, (var(--method-progress, 0) - 0.32) / 0.22, 1);
+    opacity: var(--branch-reveal);
+    transform: scale(calc(0.35 + var(--branch-reveal) * 0.65));
+  }
+
+  :global(.plant-grow--scroll) .plant-grow__branch--top {
+    --branch-reveal: clamp(0, (var(--method-progress, 0) - 0.52) / 0.22, 1);
+    opacity: var(--branch-reveal);
+    transform: scale(calc(0.35 + var(--branch-reveal) * 0.65));
+  }
+
+  :global(.plant-grow--scroll) .plant-grow__bud {
+    opacity: calc(var(--branch-reveal, 0) * 0.95);
+    transform: scale(calc(0.35 + var(--branch-reveal, 0) * 0.65));
+  }
+</style>

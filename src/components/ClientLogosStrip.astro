@@ -1,0 +1,98 @@
+---
+import { credibility } from '../data/landing';
+
+interface Props {
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+
+const isDraft = credibility.publishMode === 'draft';
+const clients = isDraft
+  ? credibility.clients
+  : credibility.clients.filter((client) => client.permissionGranted);
+
+if (clients.length === 0) {
+  return null;
+}
+
+type Client = (typeof clients)[number];
+
+/** Repite logos hasta cubrir pantallas anchas sin huecos en el loop. */
+function buildMarqueeHalf(items: Client[], minItems = 12): Client[] {
+  const half: Client[] = [];
+  while (half.length < minItems) {
+    half.push(...items);
+  }
+  return half;
+}
+
+const half = buildMarqueeHalf(clients);
+const marqueeGroups = [half, half] as const;
+---
+
+<section class:list={['client-logos-strip', overlay && 'client-logos-strip--overlay']} aria-label="Empresas que confían en EcoPrime">
+  <p class="client-logos-strip__label">{credibility.clientStripLabel}</p>
+
+  <div class="client-logos-strip__viewport">
+    <div class="client-logos-strip__track">
+      {
+        marqueeGroups.map((group, groupIndex) => (
+          <ul
+            class="client-logos-strip__group"
+            aria-hidden={groupIndex > 0 ? 'true' : undefined}
+          >
+            {
+              group.map((client) => (
+                <li class="client-logos-strip__item">
+                  <img
+                    src={client.logo!}
+                    alt={groupIndex === 0 ? client.name : ''}
+                    width={180}
+                    height={48}
+                    class="client-logos-strip__logo"
+                    loading="lazy"
+                  />
+                </li>
+              ))
+            }
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .client-logos-strip__track {
+    animation: client-logos-marquee 40s linear infinite;
+    will-change: transform;
+  }
+
+  .client-logos-strip__viewport:hover .client-logos-strip__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes client-logos-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .client-logos-strip__track {
+      animation: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .client-logos-strip__group[aria-hidden='true'] {
+      display: none;
+    }
+  }
+</style>

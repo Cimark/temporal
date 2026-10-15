@@ -1,0 +1,188 @@
+---
+/** Modal de cotización por correo — usado en servicios y equipos. */
+---
+
+<dialog id="quote-modal" class="quote-modal" aria-labelledby="quote-modal-title">
+  <div class="quote-modal__panel">
+    <header class="quote-modal__header">
+      <div>
+        <p class="quote-modal__eyebrow" id="quote-modal-eyebrow">Cotización</p>
+        <h2 class="quote-modal__title" id="quote-modal-title">Cotizar por correo</h2>
+        <p class="quote-modal__item" id="quote-modal-item" hidden></p>
+      </div>
+      <button type="button" class="quote-modal__close" data-quote-close aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+        </svg>
+      </button>
+    </header>
+
+    <form class="quote-modal__form" id="quote-form" novalidate>
+      <input type="hidden" name="to" id="quote-to" value="" />
+      <input type="hidden" name="type" id="quote-type" value="" />
+      <input type="hidden" name="item" id="quote-item-value" value="" />
+
+      <label class="quote-field">
+        <span>Nombre</span>
+        <input type="text" name="name" required autocomplete="name" placeholder="Tu nombre" />
+      </label>
+
+      <label class="quote-field">
+        <span>Empresa</span>
+        <input type="text" name="company" autocomplete="organization" placeholder="Nombre de la empresa" />
+      </label>
+
+      <div class="quote-field-row">
+        <label class="quote-field">
+          <span>Correo</span>
+          <input type="email" name="email" required autocomplete="email" placeholder="tu@empresa.com" />
+        </label>
+        <label class="quote-field">
+          <span>Teléfono</span>
+          <input type="tel" name="phone" autocomplete="tel" placeholder="+51 999 999 999" />
+        </label>
+      </div>
+
+      <label class="quote-field">
+        <span>Mensaje</span>
+        <textarea name="message" rows="4" required placeholder="Cuéntanos qué necesitas cotizar..."></textarea>
+      </label>
+
+      <p class="quote-modal__hint">
+        Al enviar se abrirá tu correo para completar el envío a
+        <strong id="quote-to-label">—</strong>.
+      </p>
+
+      <div class="quote-modal__actions">
+        <button type="button" class="quote-btn quote-btn--ghost" data-quote-close>Cancelar</button>
+        <button type="submit" class="quote-btn quote-btn--primary">Enviar cotización</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<script is:inline>
+  (function () {
+    const modal = document.getElementById('quote-modal');
+    const form = document.getElementById('quote-form');
+    if (!modal || !form) return;
+
+    const titleEl = document.getElementById('quote-modal-title');
+    const eyebrowEl = document.getElementById('quote-modal-eyebrow');
+    const itemEl = document.getElementById('quote-modal-item');
+    const toInput = document.getElementById('quote-to');
+    const typeInput = document.getElementById('quote-type');
+    const itemInput = document.getElementById('quote-item-value');
+    const toLabel = document.getElementById('quote-to-label');
+
+    function openQuote(trigger) {
+      const type = trigger.getAttribute('data-quote-type') || 'service';
+      const item = trigger.getAttribute('data-quote-item') || '';
+      const to = trigger.getAttribute('data-quote-to') || '';
+
+      toInput.value = to;
+      typeInput.value = type;
+      itemInput.value = item;
+      toLabel.textContent = to;
+
+      eyebrowEl.textContent = type === 'product' ? 'Equipos' : 'Servicios';
+      titleEl.textContent = type === 'product' ? 'Cotizar equipo por correo' : 'Cotizar servicio por correo';
+
+      if (item) {
+        itemEl.hidden = false;
+        itemEl.textContent = item;
+      } else {
+        itemEl.hidden = true;
+        itemEl.textContent = '';
+      }
+
+      form.reset();
+      toInput.value = to;
+      typeInput.value = type;
+      itemInput.value = item;
+
+      if (typeof modal.showModal === 'function') {
+        modal.showModal();
+      } else {
+        modal.setAttribute('open', '');
+      }
+    }
+
+    function closeQuote() {
+      if (typeof modal.close === 'function') {
+        modal.close();
+      } else {
+        modal.removeAttribute('open');
+      }
+    }
+
+    document.addEventListener('click', (event) => {
+      const openBtn = event.target.closest('[data-quote-open]');
+      if (openBtn) {
+        event.preventDefault();
+        openQuote(openBtn);
+        return;
+      }
+
+      if (event.target.closest('[data-quote-close]')) {
+        event.preventDefault();
+        closeQuote();
+      }
+    });
+
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeQuote();
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const data = new FormData(form);
+      const to = String(data.get('to') || '');
+      const type = String(data.get('type') || 'service');
+      const item = String(data.get('item') || '');
+      const name = String(data.get('name') || '').trim();
+      const company = String(data.get('company') || '').trim();
+      const email = String(data.get('email') || '').trim();
+      const phone = String(data.get('phone') || '').trim();
+      const message = String(data.get('message') || '').trim();
+
+      const kindLabel = type === 'product' ? 'Equipo' : 'Servicio';
+      const subject = item
+        ? `Cotización EcoPrime — ${kindLabel}: ${item}`
+        : `Cotización EcoPrime — ${kindLabel}`;
+
+      const body = [
+        `Hola EcoPrime,`,
+        ``,
+        `Quiero solicitar una cotización.`,
+        ``,
+        `${kindLabel}: ${item || 'Consulta general'}`,
+        `Nombre: ${name}`,
+        company ? `Empresa: ${company}` : null,
+        `Correo: ${email}`,
+        phone ? `Teléfono: ${phone}` : null,
+        ``,
+        `Mensaje:`,
+        message,
+      ]
+        .filter((line) => line !== null)
+        .join('\n');
+
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'generate_lead', {
+          lead_type: type,
+          lead_item: item,
+          method: 'email_form',
+        });
+      }
+
+      window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      closeQuote();
+    });
+  })();
+</script>

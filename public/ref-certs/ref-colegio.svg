@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" role="img" aria-label="Colegio profesional">
+  <rect x="8" y="8" width="104" height="104" rx="16" stroke="#19341C" stroke-width="4"/>
+  <path d="M60 28 78 38v24c0 14-18 26-18 26S42 76 42 62V38l18-10z" fill="#19341C"/>
+  <path d="M52 58l6 6 12-14" stroke="#A8B738" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

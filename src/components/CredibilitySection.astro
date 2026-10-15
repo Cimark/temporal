@@ -1,0 +1,84 @@
+---
+import SectionShell from './SectionShell.astro';
+import SectionHeading from './SectionHeading.astro';
+import CardWave from './CardWave.astro';
+import { credibility } from '../data/landing';
+import sectorManufactura from '../assets/sector_manufactura.jpg';
+import sectorAgro from '../assets/sector_agro.jpg';
+import sectorConstruccion from '../assets/sector_construccion.jpg';
+import sectorEnergia from '../assets/sector_energia.jpg';
+import sectorRetail from '../assets/sector_retail.jpg';
+import sectorMineria from '../assets/sector_mineria.jpg';
+
+const isDraft = credibility.publishMode === 'draft';
+
+const visibleCases = isDraft
+  ? credibility.caseStudies
+  : credibility.caseStudies.filter((c) => c.verified);
+
+const caseImages: Record<string, (typeof sectorManufactura)> = {
+  manufactura: sectorManufactura,
+  agro: sectorAgro,
+  construccion: sectorConstruccion,
+  energia: sectorEnergia,
+  retail: sectorRetail,
+  mineria: sectorMineria,
+};
+
+const projectPhotos = import.meta.glob<{ src: string; width: number; height: number }>(
+  '../assets/proyectos/*.{jpg,jpeg,png,webp}',
+  { eager: true, import: 'default' },
+);
+
+function projectPhoto(fileName: string) {
+  const match = Object.entries(projectPhotos).find(([path]) => {
+    const base = path.split('/').pop() ?? '';
+    return base.replace(/\.[^.]+$/, '') === fileName;
+  });
+  return match?.[1];
+}
+---
+
+<SectionShell id="credibilidad" tone="light" padding="px-4 pt-24 pb-12 sm:px-6" innerClass="section-inner--wide">
+  <SectionHeading
+    eyebrow={credibility.eyebrow}
+    title={credibility.title}
+    description={credibility.description}
+    tone="light"
+    align="center"
+  />
+
+  {
+    visibleCases.length > 0 ? (
+      <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            visibleCases.map((study) => {
+              const image = projectPhoto(study.imageFile) ?? caseImages[study.imageSlug];
+              return (
+                <article class="cred-case-card group h-full">
+                  <div class="cred-case-card__media">
+                    <img
+                      src={image.src}
+                      alt=""
+                      width={image.width}
+                      height={image.height}
+                      class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div class="card-brand__overlay" aria-hidden="true" />
+                    <p class="card-brand__eyebrow absolute left-4 top-4 z-10">{study.sector}</p>
+                    <p class="cred-case-card__place">{study.client}</p>
+                    <CardWave />
+                  </div>
+                  <div class="cred-case-card__body">
+                    <h3 class="cred-case-card__title">{study.headline}</h3>
+                    <p class="cred-case-card__desc">{study.result}</p>
+                  </div>
+                </article>
+              );
+            })
+          }
+      </div>
+    ) : null
+  }
+</SectionShell>

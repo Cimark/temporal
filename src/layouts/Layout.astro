@@ -1,0 +1,104 @@
+---
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import QuoteModal from '../components/QuoteModal.astro';
+import { siteConfig } from '../config/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = siteConfig.tagline,
+  noindex = false,
+} = Astro.props;
+
+const { gaMeasurementId, gtmId, name, siteUrl, email, whatsapp } = siteConfig;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    {
+      gtmId ? (
+        <script is:inline define:vars={{ gtmId }}>
+          (function (w, d, s, l, i) {
+            w[l] = w[l] || [];
+            w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+            var f = d.getElementsByTagName(s)[0],
+              j = d.createElement(s),
+              dl = l != 'dataLayer' ? '&l=' + l : '';
+            j.async = true;
+            j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+            f.parentNode.insertBefore(j, f);
+          })(window, document, 'script', 'dataLayer', gtmId);
+        </script>
+      ) : null
+    }
+    <SEO title={title} description={description} noindex={noindex} />
+    {
+      gaMeasurementId ? (
+        <>
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`} />
+          <script is:inline define:vars={{ gaMeasurementId }}>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', gaMeasurementId);
+          </script>
+        </>
+      ) : null
+    }
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name,
+        url: siteUrl,
+        email,
+        description,
+        contactPoint: {
+          '@type': 'ContactPoint',
+          contactType: 'customer service',
+          telephone: `+${whatsapp}`,
+          areaServed: 'PE',
+          availableLanguage: 'Spanish',
+        },
+      })}
+    />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    {
+      gtmId ? (
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+            height="0"
+            width="0"
+            style="display:none;visibility:hidden"
+          />
+        </noscript>
+      ) : null
+    }
+    <slot />
+    <QuoteModal />
+    <script is:inline>
+      document.querySelectorAll('[data-cta]').forEach((el) => {
+        el.addEventListener('click', () => {
+          if (typeof window.gtag === 'function') {
+            window.gtag('event', 'cta_click', {
+              cta_location: el.getAttribute('data-cta'),
+              page_path: window.location.pathname,
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

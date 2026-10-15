@@ -1,0 +1,79 @@
+---
+import SectionShell from './SectionShell.astro';
+import SectionHeading from './SectionHeading.astro';
+import BrandSeal from './BrandSeal.astro';
+import WhatsAppIcon from './icons/WhatsAppIcon.astro';
+import { whatsappUrl } from '../config/site';
+import { painPoints, problemSolution, solutionSteps } from '../data/landing';
+---
+
+<SectionShell id="nosotros" tone="dark">
+  <div class="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+    <div>
+      <SectionHeading
+        eyebrow={problemSolution.eyebrow}
+        title={problemSolution.title}
+        description={problemSolution.problem}
+        tone="dark"
+      />
+
+      <ul class="mt-8">
+        {
+          painPoints.map((point) => (
+            <li class="pain-point">
+              <span class="pain-point__marker" aria-hidden="true">
+                <svg class="pain-point__icon" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 3 3.5 19.5h17L12 3z"
+                    fill="currentColor"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linejoin="round"
+                  />
+                  <path d="M12 9v5" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+                  <circle cx="12" cy="16.5" r="1" fill="#fff" />
+                </svg>
+              </span>
+              <span>{point}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="solution-panel solution-panel--document px-8 pb-8 pt-24 sm:p-10">
+      <BrandSeal />
+      <div class="solution-panel__content">
+      <p class="solution-panel__heading">{problemSolution.solutionPanelHeading}</p>
+      <p class="solution-panel__lead">{problemSolution.solution}</p>
+
+      <ol class="solution-timeline solution-timeline--document mt-6">
+        {
+          solutionSteps.map((step, index) => (
+            <li class="solution-timeline__step">
+              <div class="solution-timeline__rail">
+                <span class="solution-timeline__marker">{String(index + 1).padStart(2, '0')}</span>
+                {index < solutionSteps.length - 1 ? (
+                  <span class="solution-timeline__connector" aria-hidden="true" />
+                ) : null}
+              </div>
+              <p class="solution-timeline__text">{step}</p>
+            </li>
+          ))
+        }
+      </ol>
+
+      <a
+        href={whatsappUrl('Quiero conocer cómo EcoPrime puede ayudar a mi empresa.')}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-primary mt-8 inline-flex items-center gap-2"
+        data-cta="problem-whatsapp"
+      >
+        <WhatsAppIcon class="h-4 w-4 shrink-0" />
+        <span>Hablar con un consultor</span>
+      </a>
+      </div>
+    </div>
+  </div>
+</SectionShell>

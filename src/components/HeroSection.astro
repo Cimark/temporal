@@ -1,0 +1,98 @@
+---
+import WhatsAppIcon from './icons/WhatsAppIcon.astro';
+import { whatsappUrl } from '../config/site';
+import { heroSection } from '../data/landing';
+import heroSlideMineria from '../assets/sector_mineria.jpg';
+import heroSlideHidrocarburos from '../assets/sector_hidrocarburos.jpg';
+import heroSlideNaturaleza from '../assets/hero-background.jpg';
+
+/** Carrusel: prioridad minera + hidrocarburos primero. */
+const heroSlides = [
+  {
+    image: heroSlideMineria,
+    alt: 'Operaciones mineras — gestión ambiental prioritaria EcoPrime',
+    objectPosition: 'center 40%',
+  },
+  {
+    image: heroSlideHidrocarburos,
+    alt: 'Instalaciones de hidrocarburos — cumplimiento ambiental industrial',
+    objectPosition: 'center',
+  },
+  {
+    image: heroSlideNaturaleza,
+    alt: 'Paisaje natural — sostenibilidad ambiental EcoPrime',
+    objectPosition: 'center',
+  },
+] as const;
+
+const firstSlide = heroSlides[0];
+---
+
+<section class="hero section-dark relative -mt-[var(--site-header-height)] flex min-h-[calc(72vh+4rem)] items-center overflow-hidden px-4 pb-14 pt-[calc(var(--site-header-height)+4rem)] sm:px-6 sm:pb-16">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="hero-bg__base">
+      <img
+        src={firstSlide.image.src}
+        alt=""
+        width={firstSlide.image.width}
+        height={firstSlide.image.height}
+        class="hero-bg__image"
+        style={`object-position: ${firstSlide.objectPosition}`}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="hero-bg__shade" />
+    </div>
+    {
+      heroSlides.map((slide, index) => (
+        <div
+          class="hero-bg__frame"
+          style={`animation-delay: ${index * 6.3}s`}
+        >
+          <img
+            src={slide.image.src}
+            alt=""
+            width={slide.image.width}
+            height={slide.image.height}
+            class="hero-bg__image"
+            style={`object-position: ${slide.objectPosition}`}
+            loading={index === 0 ? 'eager' : 'lazy'}
+            fetchpriority={index === 0 ? 'high' : 'auto'}
+          />
+          <div class="hero-bg__shade" />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="section-inner relative w-full max-w-4xl">
+    <div class="mx-auto text-center">
+      <p class="badge-dark mb-4 inline-flex">{heroSection.eyebrow}</p>
+      <h1 class="hero-title text-5xl leading-[1.05] sm:text-6xl lg:text-7xl xl:text-[4.75rem]">
+        {heroSection.titlePrefix}
+        <span class="hero-title__accent">{heroSection.titleHighlight}</span>
+      </h1>
+      <p class="hero-copy mx-auto mt-8 max-w-2xl text-lg">
+        {heroSection.description}
+      </p>
+      <div class="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+        <a
+          href={whatsappUrl('Hola, deseo solicitar una cotización ambiental para mi empresa del sector minero o hidrocarburos.')}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hero-cta"
+          data-cta="hero-primary"
+        >
+          <WhatsAppIcon class="h-4 w-4 shrink-0" />
+          <span>Solicitar cotización</span>
+        </a>
+        <a href="#sectores" class="hero-cta-ghost">
+          <span>Ver sectores prioritarios</span>
+          <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 5v14M5 12l7 7 7-7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,24 @@
+---
+interface Props {
+  label?: string;
+  tone?: 'dark' | 'light';
+  class?: string;
+}
+
+const { label = 'Respaldo técnico', tone = 'dark', class: className = '' } = Astro.props;
+---
+
+<div class:list={['brand-seal', tone === 'light' && 'brand-seal--light', className]} aria-hidden="true">
+  <div class="brand-seal__ring">
+    <img
+      src="/isotipo-ecoprime-oficial.svg"
+      alt=""
+      width={36}
+      height={36}
+      class="brand-seal__mark"
+      loading="lazy"
+    />
+    <p class="brand-seal__name">EcoPrime</p>
+    <p class="brand-seal__label">{label}</p>
+  </div>
+</div>

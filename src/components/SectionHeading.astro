@@ -1,0 +1,43 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  tone: 'dark' | 'light';
+  align?: 'left' | 'center';
+  titleWide?: boolean;
+}
+
+const { eyebrow, title, description, tone, align = 'left', titleWide = false } = Astro.props;
+const isDark = tone === 'dark';
+const centered = align === 'center';
+---
+
+<div class:list={[centered && 'text-center']}>
+  {eyebrow ? <p class={isDark ? 'badge-dark' : 'badge-light'}>{eyebrow}</p> : null}
+  <h2
+    class:list={[
+      'text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.75rem]',
+      eyebrow && 'mt-5',
+      isDark ? 'text-white' : 'text-eco-950',
+      centered && !titleWide && 'mx-auto max-w-3xl',
+      centered && titleWide && 'mx-auto max-w-6xl lg:max-w-none',
+    ]}
+  >
+    {title}
+  </h2>
+  {
+    description ? (
+      <p
+        class:list={[
+          'mt-5 text-base leading-relaxed sm:text-lg',
+          isDark ? 'text-body-dark' : 'text-body-light',
+          centered && 'mx-auto max-w-2xl',
+          !centered && 'max-w-2xl',
+        ]}
+      >
+        {description}
+      </p>
+    ) : null
+  }
+</div>

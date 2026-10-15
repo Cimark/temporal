@@ -1,0 +1,65 @@
+---
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  id?: string;
+  tone: 'dark' | 'light' | 'muted';
+  image?: ImageMetadata;
+  imageAlt?: string;
+  overlay?: 'default' | 'strong' | 'light' | 'photo';
+  flipImage?: boolean;
+  class?: string;
+  padding?: string;
+  innerClass?: string;
+}
+
+const {
+  id,
+  tone,
+  image,
+  imageAlt = '',
+  overlay = 'default',
+  flipImage = false,
+  class: className = '',
+  padding = 'px-4 py-24 sm:px-6',
+  innerClass = '',
+} = Astro.props;
+
+const isDark = tone === 'dark';
+const isMuted = tone === 'muted';
+const overlayClass =
+  overlay === 'strong'
+    ? 'section-overlay-strong'
+    : overlay === 'light'
+      ? 'section-overlay-light'
+      : overlay === 'photo'
+        ? 'section-overlay-photo'
+        : 'section-overlay';
+const imageToneClass = overlay === 'photo' ? 'section-bg-image--vivid' : '';
+const imageFlipClass = flipImage ? 'section-bg-image--flip' : '';
+const overlayFlipClass = flipImage && overlay === 'photo' ? 'section-overlay-photo--flip' : '';
+const sectionClass = isDark ? 'section-dark' : isMuted ? 'section-muted' : 'section-light';
+---
+
+<section
+  id={id}
+  class:list={[sectionClass, padding, className]}
+>
+  {
+    image ? (
+      <img
+        src={image.src}
+        alt={imageAlt}
+        width={image.width}
+        height={image.height}
+        class:list={['section-bg-image', imageToneClass, imageFlipClass]}
+        loading="lazy"
+      />
+    ) : null
+  }
+  {isDark && image ? <div class:list={[overlayClass, overlayFlipClass]} aria-hidden="true" /> : null}
+  <div class:list={['section-inner', innerClass]}>
+    <slot />
+  </div>
+  <slot name="after" />
+</section>

@@ -1,0 +1,192 @@
+---
+import SectionShell from './SectionShell.astro';
+import BrandSeal from './BrandSeal.astro';
+import WhatsAppIcon from './icons/WhatsAppIcon.astro';
+import MailIcon from './icons/MailIcon.astro';
+import { siteConfig, whatsappUrl } from '../config/site';
+import { featuredSectorPanels, industries } from '../data/landing';
+import sectorMineria from '../assets/sector_mineria.jpg';
+import sectorHidrocarburos from '../assets/sector_hidrocarburos.jpg';
+import sectorConstruccion from '../assets/sector_construccion.jpg';
+
+const industryImages: Record<string, (typeof sectorMineria)> = {
+  mineria: sectorMineria,
+  hidrocarburos: sectorHidrocarburos,
+  construccion: sectorConstruccion,
+};
+
+const mineria = industries.find((industry) => industry.slug === 'mineria')!;
+const hidrocarburos = industries.find((industry) => industry.slug === 'hidrocarburos')!;
+const construccion = industries.find((industry) => industry.slug === 'construccion')!;
+
+const featuredBlocks = [
+  {
+    industry: mineria,
+    tone: 'dark' as const,
+    flip: false,
+    panelTone: 'document' as const,
+  },
+  {
+    industry: hidrocarburos,
+    tone: 'light' as const,
+    flip: false,
+    panelTone: 'ink' as const,
+  },
+  {
+    industry: construccion,
+    tone: 'dark' as const,
+    flip: false,
+    panelTone: 'document' as const,
+  },
+];
+---
+
+{
+  featuredBlocks.map(({ industry, tone, flip, panelTone }, index) => {
+    const image = industryImages[industry.slug];
+    const panel = featuredSectorPanels[industry.slug as keyof typeof featuredSectorPanels];
+    const isDark = tone === 'dark';
+    const isInkPanel = panelTone === 'ink';
+
+    return (
+      <SectionShell
+        id={index === 0 ? 'sectores' : undefined}
+        tone={tone}
+        innerClass="section-inner--wide"
+      >
+        <article
+          class:list={[
+            'sector-spotlight',
+            !isDark && 'sector-spotlight--light',
+            flip && 'sector-spotlight--flip',
+          ]}
+        >
+          <div class="sector-spotlight__visual">
+            <div class="sector-spotlight__intro">
+              <h3 class="sector-spotlight__title">
+                {industry.titlePrefix}
+                <span class="card-brand__accent">{industry.titleHighlight}</span>
+              </h3>
+              <span class="sector-spotlight__rule" aria-hidden="true" />
+              <p class="sector-spotlight__desc">{industry.desc}</p>
+            </div>
+
+            <div class="sector-spotlight__media">
+              <img
+                src={image.src}
+                alt={industry.alt}
+                width={image.width}
+                height={image.height}
+                class="sector-spotlight__image"
+                loading="lazy"
+              />
+              <div class="sector-spotlight__media-veil" aria-hidden="true" />
+            </div>
+          </div>
+
+          <div
+            class:list={[
+              'sector-spotlight__panel',
+              isInkPanel ? 'sector-spotlight__panel--ink' : 'solution-panel solution-panel--document',
+              !isInkPanel && 'px-6 py-8 sm:px-8 sm:py-9',
+              isInkPanel && 'px-6 py-8 sm:px-8 sm:py-9',
+            ]}
+          >
+            {!isInkPanel ? <BrandSeal /> : <BrandSeal class="sector-spotlight__seal--ink" />}
+
+            <div class:list={[!isInkPanel && 'solution-panel__content', 'sector-spotlight__panel-body']}>
+              <p
+                class:list={[
+                  'sector-spotlight__panel-eyebrow',
+                  isInkPanel && 'sector-spotlight__panel-eyebrow--ink',
+                ]}
+              >
+                {panel.eyebrow}
+              </p>
+              <p
+                class:list={[
+                  isInkPanel ? 'sector-spotlight__panel-heading sector-spotlight__panel-heading--ink' : 'solution-panel__heading',
+                ]}
+              >
+                {panel.panelHeading}
+              </p>
+              <p
+                class:list={[
+                  isInkPanel ? 'sector-spotlight__panel-lead sector-spotlight__panel-lead--ink' : 'solution-panel__lead',
+                ]}
+              >
+                {panel.panelLead}
+              </p>
+
+              <ol
+                class:list={[
+                  'sector-spotlight__list',
+                  !isInkPanel && 'solution-timeline solution-timeline--document mt-6',
+                  isInkPanel && 'mt-6',
+                ]}
+              >
+                {panel.highlights.map((item, highlightIndex) => (
+                  <li
+                    class:list={[
+                      !isInkPanel && 'solution-timeline__step',
+                      isInkPanel && 'sector-spotlight__list-item',
+                    ]}
+                  >
+                    {!isInkPanel ? (
+                      <>
+                        <div class="solution-timeline__rail">
+                          <span class="solution-timeline__marker">
+                            {String(highlightIndex + 1).padStart(2, '0')}
+                          </span>
+                          {highlightIndex < panel.highlights.length - 1 ? (
+                            <span class="solution-timeline__connector" aria-hidden="true" />
+                          ) : null}
+                        </div>
+                        <p class="solution-timeline__text">{item}</p>
+                      </>
+                    ) : (
+                      <>
+                        <span class="sector-spotlight__list-num">
+                          {String(highlightIndex + 1).padStart(2, '0')}
+                        </span>
+                        <p class="sector-spotlight__list-text">{item}</p>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ol>
+
+              <div class="sector-spotlight__actions mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <a
+                  href={whatsappUrl(panel.whatsappMessage)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-primary inline-flex items-center justify-center gap-2"
+                  data-cta={`sector-${industry.slug}-whatsapp`}
+                >
+                  <WhatsAppIcon class="h-4 w-4 shrink-0" />
+                  <span>Consultar sector</span>
+                </a>
+                <button
+                  type="button"
+                  class:list={[
+                    'inline-flex items-center justify-center gap-2',
+                    isInkPanel ? 'btn-ghost-dark' : 'btn-ghost-light',
+                  ]}
+                  data-quote-open
+                  data-quote-type="service"
+                  data-quote-item={`${industry.titlePrefix}${industry.titleHighlight}`}
+                  data-quote-to={siteConfig.emailServices}
+                  data-cta={`sector-${industry.slug}-email`}
+                >
+                  <MailIcon class="h-4 w-4 shrink-0" />
+                  <span>Cotizar por correo</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </SectionShell>
+    );
+  })
+}

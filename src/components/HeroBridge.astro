@@ -1,0 +1,115 @@
+---
+import CheckBullet from './icons/CheckBullet.astro';
+import WhatsAppIcon from './icons/WhatsAppIcon.astro';
+import MailIcon from './icons/MailIcon.astro';
+import CertRubroIcon from './icons/CertRubroIcon.astro';
+import { siteConfig, whatsappUrl } from '../config/site';
+import { heroHighlightServices } from '../data/landing';
+import imgLegal from '../assets/highlight_asesoria_juridica.jpg';
+import imgCertificacion from '../assets/highlight_certificacion_rubros.jpg';
+
+const highlightImages: Record<
+  string,
+  { image: typeof imgLegal; objectPosition: string }
+> = {
+  legal: { image: imgLegal, objectPosition: 'center top' },
+  certificacion: { image: imgCertificacion, objectPosition: 'center top' },
+};
+---
+
+<section class="hero-trust" aria-label="Servicios destacados">
+  <div class="hero-trust__inner">
+    <p class="hero-trust__label">Servicios que impulsan tu cumplimiento</p>
+    <ul class="hero-highlights">
+      {
+        heroHighlightServices.map((service) => {
+          const rubros = 'rubros' in service ? service.rubros : null;
+          const media = highlightImages[service.imageSlug];
+          return (
+            <li>
+              <article class="hero-highlight-card">
+                <div class="hero-highlight-card__media">
+                  <img
+                    src={media.image.src}
+                    alt={`${service.titlePrefix}${service.titleHighlight}`}
+                    width={media.image.width}
+                    height={media.image.height}
+                    class="hero-highlight-card__image"
+                    style={`object-position: ${media.objectPosition}`}
+                    loading="lazy"
+                  />
+                </div>
+
+                <div class="hero-highlight-card__content">
+                  <div class="hero-highlight-card__top">
+                    <span class="hero-highlight-card__icon" aria-hidden="true">
+                      <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <path d={service.icon} stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                    <p class="hero-highlight-card__tag">{service.tag}</p>
+                  </div>
+
+                  <h3 class="hero-highlight-card__title">
+                    {service.titlePrefix}
+                    <span class="card-brand__accent">{service.titleHighlight}</span>
+                  </h3>
+                  <p class="hero-highlight-card__desc">{service.desc}</p>
+
+                  {rubros ? (
+                    <ul class="cert-rubros" aria-label="Rubros de certificación">
+                      {rubros.map((rubro) => (
+                        <li class="cert-rubros__item">
+                          <span class="cert-rubros__icon" aria-hidden="true">
+                            <CertRubroIcon slug={rubro.slug} />
+                          </span>
+                          <span class="cert-rubros__label">{rubro.label}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                  {service.bullets.length > 0 ? (
+                    <ul class="hero-highlight-card__bullets">
+                      {service.bullets.map((bullet) => (
+                        <li>
+                          <CheckBullet />
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                <div class="card-cta-stack hero-highlight-card__cta">
+                    <a
+                      href={whatsappUrl(service.whatsappMessage)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="service-card-cta"
+                      data-cta={`hero-${service.slug}`}
+                    >
+                      <WhatsAppIcon class="service-card-cta__icon" />
+                      <span>{service.cta}</span>
+                    </a>
+                    <button
+                      type="button"
+                      class="service-card-cta service-card-cta--email"
+                      data-quote-open
+                      data-quote-type="service"
+                      data-quote-item={`${service.titlePrefix}${service.titleHighlight}`}
+                      data-quote-to={siteConfig.emailServices}
+                      data-cta={`hero-email-${service.slug}`}
+                    >
+                      <MailIcon class="service-card-cta__icon" />
+                      <span>Cotizar por correo</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>

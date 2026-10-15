@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Layout
+  title={`Gracias | ${siteConfig.name}`}
+  description="Gracias por contactar con EcoPrime."
+  noindex={true}
+>
+  <Header />
+  <main class="mx-auto max-w-xl px-4 py-24 text-center sm:px-6">
+    <h1 class="text-3xl font-bold">¡Gracias!</h1>
+    <p class="mt-4 text-white/75">Recibimos tu mensaje. Te responderemos pronto.</p>
+    <a href="/" class="mt-8 inline-flex rounded-full bg-eco-500 px-6 py-3 font-bold text-eco-950 hover:brightness-110">
+      Volver al inicio
+    </a>
+  </main>
+  <Footer />
+</Layout>
+
+<script is:inline>
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', 'generate_lead', { method: 'thank_you_page' });
+  }
+</script>

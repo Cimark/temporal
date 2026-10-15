@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config/site';
+---
+
+<Layout
+  title={`Cookies | ${siteConfig.name}`}
+  description={`Información sobre cookies y analítica web en ${siteConfig.name}.`}
+>
+  <Header />
+  <main class="mx-auto max-w-3xl px-4 py-16 sm:px-6 text-white/80 leading-relaxed space-y-4">
+    <h1 class="text-3xl font-bold text-white">Política de cookies</h1>
+    <p>Este sitio puede usar cookies técnicas y de analítica (Google Analytics 4 / Google Tag Manager).</p>
+    <ul class="list-disc pl-5 space-y-2">
+      <li><strong>Técnicas:</strong> necesarias para el funcionamiento básico.</li>
+      <li><strong>Analíticas:</strong> miden visitas y conversiones de forma agregada.</li>
+    </ul>
+    <p>Puedes configurar tu navegador para bloquear cookies. Al continuar navegando aceptas su uso según esta política.</p>
+  </main>
+  <Footer />
+</Layout>

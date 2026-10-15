@@ -1,0 +1,132 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ClientLogosStrip from '../components/ClientLogosStrip.astro';
+import SectionShell from '../components/SectionShell.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ServicesSection from '../components/ServicesSection.astro';
+import EquipmentSection from '../components/EquipmentSection.astro';
+import IndustriesSection from '../components/IndustriesSection.astro';
+import HeroSection from '../components/HeroSection.astro';
+import HeroBridge from '../components/HeroBridge.astro';
+import CredibilitySection from '../components/CredibilitySection.astro';
+import MethodologySection from '../components/MethodologySection.astro';
+import ProblemSolutionSection from '../components/ProblemSolutionSection.astro';
+import WhatsAppIcon from '../components/icons/WhatsAppIcon.astro';
+import { siteConfig, whatsappUrl } from '../config/site';
+import heroBackground from '../assets/hero-background.jpg';
+import {
+  faqs,
+  landingSeo,
+} from '../data/landing';
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.answer,
+    },
+  })),
+};
+---
+
+<Layout title={landingSeo.title} description={landingSeo.description}>
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+  <Header />
+
+  <main>
+    <HeroSection />
+
+    <HeroBridge />
+
+    <!-- 2. Problema / solución — oscuro -->
+    <ProblemSolutionSection />
+
+    <!-- 3. Servicios — blanco -->
+    <ServicesSection />
+
+    <!-- 4. Sectores — verde -->
+    <IndustriesSection />
+
+    <!-- 5. Equipos — vitrina / tienda landing -->
+    <EquipmentSection />
+
+    <!-- 6. Metodología — gris neutro -->
+    <MethodologySection />
+
+    <!-- 6. Credibilidad — referencia / datos verificados -->
+    <CredibilitySection />
+
+    <!-- 7. FAQ — blanco -->
+    <SectionShell id="faq" tone="light" padding="px-4 pt-12 pb-24 sm:px-6">
+      <SectionHeading
+        eyebrow="Preguntas frecuentes"
+        title="Resolvemos tus dudas"
+        tone="light"
+        align="center"
+      />
+      <div class="mx-auto mt-10 max-w-3xl space-y-4">
+        {
+          faqs.map((faq) => (
+            <details class="card-light group p-5 open:border-eco-500/30">
+              <summary class="cursor-pointer list-none font-semibold text-eco-950 marker:content-none">
+                <span class="flex items-center justify-between gap-4">
+                  {faq.question}
+                  <span class="text-eco-500 transition group-open:rotate-45">+</span>
+                </span>
+              </summary>
+              <p class="mt-4 text-sm leading-relaxed text-body-light">{faq.answer}</p>
+            </details>
+          ))
+        }
+      </div>
+    </SectionShell>
+
+    <!-- 10. CTA — oscuro + imagen hero -->
+    <SectionShell
+      id="contacto"
+      tone="dark"
+      image={heroBackground}
+      imageAlt=""
+      class="section-contact"
+      padding="px-4 pt-24 pb-0 sm:px-6 sm:pt-28"
+    >
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="badge-dark">Primer paso</p>
+        <h2 class="mt-5 text-3xl font-bold sm:text-4xl">¿Listo para elevar tu gestión ambiental?</h2>
+        <p class="mt-4 text-body-dark">
+          Cuéntanos tu operación y te respondemos con una propuesta a medida. Sin compromiso en la consulta
+          inicial.
+        </p>
+        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <a
+            href={whatsappUrl('Hola, quiero agendar una consulta ambiental con EcoPrime.')}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-primary inline-flex items-center gap-2 px-8"
+            data-cta="footer-whatsapp"
+          >
+            <WhatsAppIcon class="h-4 w-4 shrink-0" />
+            <span>Escribir por WhatsApp</span>
+          </a>
+          <a
+            href={`mailto:${siteConfig.email}?subject=Consulta%20ambiental%20EcoPrime`}
+            class="btn-ghost-dark px-8"
+            data-cta="footer-email"
+          >
+            {siteConfig.email}
+          </a>
+        </div>
+      </div>
+
+      <ClientLogosStrip overlay slot="after" />
+    </SectionShell>
+  </main>
+
+  <Footer />
+</Layout>

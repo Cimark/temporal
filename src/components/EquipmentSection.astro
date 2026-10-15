@@ -1,0 +1,151 @@
+---
+import SectionShell from './SectionShell.astro';
+import SectionHeading from './SectionHeading.astro';
+import WhatsAppIcon from './icons/WhatsAppIcon.astro';
+import MailIcon from './icons/MailIcon.astro';
+import { siteConfig, whatsappUrl } from '../config/site';
+import { equipmentProducts, equipmentSection } from '../data/landing';
+import equipoMonitorAire from '../assets/equipo_monitor_aire.jpg';
+import equipoKitEfluentes from '../assets/equipo_kit_efluentes.jpg';
+import equipoSonometro from '../assets/equipo_sonometro.jpg';
+import equipoEstacion from '../assets/equipo_estacion_monitoreo.jpg';
+
+const productImages: Record<string, (typeof equipoMonitorAire)> = {
+  'monitor-aire': equipoMonitorAire,
+  'kit-efluentes': equipoKitEfluentes,
+  sonometro: equipoSonometro,
+  'estacion-monitoreo': equipoEstacion,
+};
+
+const miningPhotos = import.meta.glob<{ src: string; width: number; height: number }>(
+  '../assets/equipos-mineria/*.{jpg,jpeg,png,webp}',
+  { eager: true, import: 'default' },
+);
+
+function miningPhoto(fileName: string) {
+  const match = Object.entries(miningPhotos).find(([path]) => {
+    const base = path.split('/').pop() ?? '';
+    return base.replace(/\.[^.]+$/, '') === fileName;
+  });
+  return match?.[1];
+}
+---
+
+<SectionShell id="equipos" tone="muted" padding="px-4 pt-20 pb-10 sm:px-6 sm:pt-24 sm:pb-12" innerClass="section-inner--wide">
+  <SectionHeading
+    eyebrow={equipmentSection.eyebrow}
+    title={equipmentSection.title}
+    description={equipmentSection.description}
+    tone="light"
+    align="center"
+  />
+
+  <div class="equipment-filters" role="tablist" aria-label="Tipo de equipo">
+    {
+      equipmentSection.filters.map((filter, index) => (
+        <button
+          type="button"
+          class="equipment-filter"
+          role="tab"
+          aria-pressed={index === 0 ? 'true' : 'false'}
+          data-equipment-filter={filter.id}
+        >
+          {filter.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <ul class="equipment-grid mt-8" data-active="ambiental">
+    {
+      equipmentProducts.map((product) => {
+        const image =
+          ('imageFile' in product ? miningPhoto(product.imageFile) : undefined) ??
+          productImages[product.imageSlug];
+        return (
+          <li data-equipment-group={product.line} hidden={product.line !== 'ambiental'}>
+            <article class:list={['equipment-card', product.line === 'mineria' && 'equipment-card--wide']}>
+              <div class="equipment-card__media">
+                <img
+                  src={image.src}
+                  alt={product.name}
+                  width={image.width}
+                  height={image.height}
+                  class="equipment-card__image"
+                  loading="lazy"
+                />
+                <p class="equipment-card__category">{product.category}</p>
+              </div>
+
+              <div class="equipment-card__body">
+                <h3 class="equipment-card__title">{product.name}</h3>
+                <p class="equipment-card__desc">{product.desc}</p>
+                <p class="equipment-card__price">{product.priceLabel}</p>
+                <div class="card-cta-stack">
+                  <a
+                    href={whatsappUrl(product.whatsappMessage)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="service-card-cta"
+                    data-cta={`equipo-${product.slug}`}
+                  >
+                    <WhatsAppIcon class="service-card-cta__icon" />
+                    <span>{product.cta}</span>
+                  </a>
+                  <button
+                    type="button"
+                    class="service-card-cta service-card-cta--email"
+                    data-quote-open
+                    data-quote-type="product"
+                    data-quote-item={product.name}
+                    data-quote-to={siteConfig.emailProducts}
+                    data-cta={`equipo-email-${product.slug}`}
+                  >
+                    <MailIcon class="service-card-cta__icon" />
+                    <span>Cotizar por correo</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  <script>
+    const root = document.getElementById('equipos');
+    const buttons = root?.querySelectorAll('[data-equipment-filter]');
+    const cards = root?.querySelectorAll('[data-equipment-group]');
+    const grid = root?.querySelector('.equipment-grid');
+
+    buttons?.forEach((button) => {
+      button.addEventListener('click', () => {
+        const group = button.getAttribute('data-equipment-filter');
+        buttons.forEach((item) => {
+          item.setAttribute('aria-pressed', String(item === button));
+        });
+        cards?.forEach((card) => {
+          card.toggleAttribute('hidden', card.getAttribute('data-equipment-group') !== group);
+        });
+        if (group) grid?.setAttribute('data-active', group);
+      });
+    });
+  </script>
+
+  <div class="equipment-footer">
+    <p class="equipment-footer__copy">
+      ¿Buscas otro equipo o un paquete para tu planta? Te armamos la propuesta.
+    </p>
+    <a
+      href={whatsappUrl(equipmentSection.ctaMessage)}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-primary inline-flex items-center gap-2"
+      data-cta="equipos-catalogo"
+    >
+      <WhatsAppIcon class="h-4 w-4 shrink-0" />
+      <span>{equipmentSection.ctaLabel}</span>
+    </a>
+  </div>
+</SectionShell>

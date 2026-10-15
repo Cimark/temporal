@@ -1,0 +1,53 @@
+---
+interface Props {
+  slug: string;
+  class?: string;
+}
+
+const { slug, class: className = 'h-4 w-4' } = Astro.props;
+---
+
+<svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+  {
+    slug === 'mineria' ? (
+      <>
+        <path d="M3 20h18" stroke-linecap="round" />
+        <path d="M5 20l3.5-8.5L12 6l3.5 5.5L19 20" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M9.5 14.5h5" stroke-linecap="round" />
+        <path d="M14 4l4 2-2.5 5" stroke-linecap="round" stroke-linejoin="round" />
+      </>
+    ) : slug === 'hidrocarburos' ? (
+      <>
+        <path d="M8 21h8" stroke-linecap="round" />
+        <path d="M10 21V10h4v11" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M9 10V7l3-4 3 4v3" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M7 14h10" stroke-linecap="round" />
+        <path d="M12 3v2" stroke-linecap="round" />
+        <circle cx="12" cy="16.5" r="1.25" />
+      </>
+    ) : slug === 'industria' ? (
+      <>
+        <path d="M3 21h18" stroke-linecap="round" />
+        <path d="M5 21V12l4 2.5V11l4 2.5V9l5-2.5V21" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M15 6.5V4.5M17.5 6.5V3.5M20 6.5V5" stroke-linecap="round" />
+        <path d="M7.5 16.5h2M12.5 16.5h2" stroke-linecap="round" />
+      </>
+    ) : slug === 'infraestructura' ? (
+      <>
+        <path d="M3 18h18" stroke-linecap="round" />
+        <path d="M5 18V11l7-5 7 5v7" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M9 18v-4h6v4" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M2 21l4-3M22 21l-4-3" stroke-linecap="round" />
+        <path d="M8 8.5l4-2.8 4 2.8" stroke-linecap="round" stroke-linejoin="round" />
+      </>
+    ) : (
+      <>
+        <path d="M12 21V11" stroke-linecap="round" />
+        <path d="M12 11c-1.5-3.5-4.5-5-7-5 0 3.5 2 6 7 7" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M12 11c1.5-3.5 4.5-5 7-5 0 3.5-2 6-7 7" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M8.5 14.5c-1.2-.4-2.5-.4-3.5.2M15.5 14.5c1.2-.4 2.5-.4 3.5.2" stroke-linecap="round" />
+        <path d="M9 21h6" stroke-linecap="round" />
+      </>
+    )
+  }
+</svg>

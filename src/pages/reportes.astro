@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { siteConfig } from '../config/site';
+
+const { lookerStudioUrl, reportesPin } = siteConfig;
+---
+
+<Layout
+  title={`Reportes | ${siteConfig.name}`}
+  description="Panel de métricas web — acceso equipo EcoPrime."
+  noindex={true}
+>
+  <Header />
+  <main class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+    <h1 class="text-3xl font-bold">Reportes web</h1>
+    <p class="mt-2 text-white/75">
+      Métricas de tráfico y conversiones (Google Analytics / Looker Studio). Solo equipo autorizado.
+    </p>
+
+    {
+      lookerStudioUrl ? (
+        <div class="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+          <iframe
+            src={lookerStudioUrl}
+            width="100%"
+            height="720"
+            frameborder="0"
+            allowfullscreen
+            title="Reportes EcoPrime"
+            class="min-h-[60vh] w-full"
+          />
+        </div>
+      ) : (
+        <div
+          class="mt-8 rounded-2xl border border-dashed border-eco-500/40 bg-eco-950 p-8 text-sm text-white/75"
+          id="reportes-placeholder"
+        >
+          <p>
+            Configura <code class="text-eco-500">PUBLIC_LOOKER_STUDIO_URL</code> en Railway con la URL
+            embed de Looker Studio vinculada a la propiedad GA4 del cliente.
+          </p>
+          {reportesPin ? (
+            <p class="mt-4">Acceso protegido: introduce el PIN en el panel cuando esté activo.</p>
+          ) : null}
+        </div>
+      )
+    }
+  </main>
+  <Footer />
+</Layout>
+
+{
+  reportesPin ? (
+    <script is:inline define:vars={{ reportesPin }}>
+      const stored = sessionStorage.getItem('ecoprime_reportes_ok');
+      const placeholder = document.getElementById('reportes-placeholder');
+      if (!stored && placeholder) {
+        const pin = prompt('PIN de acceso a reportes:');
+        if (pin !== reportesPin) {
+          window.location.href = '/';
+        } else {
+          sessionStorage.setItem('ecoprime_reportes_ok', '1');
+        }
+      }
+    </script>
+  ) : null
+}

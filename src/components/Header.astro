@@ -1,0 +1,142 @@
+---
+import WhatsAppIcon from './icons/WhatsAppIcon.astro';
+import { formatPeruPhone, siteConfig, whatsappUrl } from '../config/site';
+import { headerNavLinks } from '../data/navigation';
+---
+
+<header class="site-header">
+  <div class="site-header__bar">
+    <a href="/" class="site-header__logo-link">
+      <img
+        src="/logo-ecoprime-oficial.svg"
+        alt={`${siteConfig.name} logo`}
+        class="site-header__logo"
+        loading="eager"
+      />
+    </a>
+
+    <nav class="site-header__nav" aria-label="Principal">
+      {
+        headerNavLinks.map((link) => (
+          <a href={link.href} class="site-header__nav-link">
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="site-header__actions">
+      <a
+        href={whatsappUrl()}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="site-header__cta"
+        data-cta="header-whatsapp"
+      >
+        <WhatsAppIcon class="site-header__cta-icon" />
+        <span class="site-header__cta-number">{formatPeruPhone(siteConfig.whatsapp)}</span>
+      </a>
+
+      <button
+        type="button"
+        class="site-header__menu-toggle"
+        aria-label="Abrir menú"
+        aria-expanded="false"
+        aria-controls="site-mobile-menu"
+        data-menu-toggle
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="site-header__menu-icon site-header__menu-icon--open h-5 w-5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="site-header__menu-icon site-header__menu-icon--close hidden h-5 w-5" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="site-header__line" aria-hidden="true"></div>
+</header>
+
+<div class="site-header__menu-panel" id="site-mobile-menu" hidden>
+  <nav class="site-header__menu-nav" aria-label="Menú móvil">
+    {
+      headerNavLinks.map((link) => (
+        <a href={link.href} class="site-header__menu-link">
+          {link.label}
+        </a>
+      ))
+    }
+  </nav>
+  <a
+    href={whatsappUrl()}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="site-header__menu-cta"
+    data-cta="header-whatsapp-mobile-menu"
+  >
+    <WhatsAppIcon class="h-4 w-4 shrink-0" />
+    <span>WhatsApp</span>
+  </a>
+</div>
+
+<script>
+  function initSiteHeader() {
+    const header = document.querySelector('.site-header');
+    const menuToggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const menuPanel = document.getElementById('site-mobile-menu');
+    if (!header || !menuToggle || !menuPanel) return;
+
+    if (header.dataset.menuInit === '1') return;
+    header.dataset.menuInit = '1';
+
+    const openIcon = menuToggle.querySelector('.site-header__menu-icon--open');
+    const closeIcon = menuToggle.querySelector('.site-header__menu-icon--close');
+
+    const setMenuOpen = (open: boolean) => {
+      menuPanel.hidden = !open;
+      menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menuToggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      header.classList.toggle('site-header--menu-open', open);
+      openIcon?.classList.toggle('hidden', open);
+      closeIcon?.classList.toggle('hidden', !open);
+      document.documentElement.classList.toggle('site-menu-open', open);
+      document.body.classList.toggle('site-menu-open', open);
+    };
+
+    const closeMenu = () => setMenuOpen(false);
+    const openMenu = () => setMenuOpen(true);
+
+    menuToggle.addEventListener('click', () => {
+      if (menuPanel.hidden) openMenu();
+      else closeMenu();
+    });
+
+    menuPanel.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMenu();
+    });
+
+    window.addEventListener(
+      'resize',
+      () => {
+        if (window.matchMedia('(min-width: 768px)').matches) closeMenu();
+      },
+      { passive: true },
+    );
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        header.classList.toggle('site-header--scrolled', window.scrollY > 8);
+        if (!menuPanel.hidden) closeMenu();
+      },
+      { passive: true },
+    );
+  }
+
+  initSiteHeader();
+  document.addEventListener('astro:page-load', initSiteHeader);
+</script>

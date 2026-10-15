@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /reportes
+Disallow: /gracias
+
+Sitemap: https://www.ecoprime.pe/sitemap-index.xml
